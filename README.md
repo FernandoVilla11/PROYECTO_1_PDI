@@ -46,15 +46,70 @@ pip install opencv-python numpy matplotlib pandas openpyxl
 ```
 
 ##  Uso
+
+###  **Ejecutar el programa**
 ```bash
 python main.py
 ```
 
-###  Controles
-- **Q / ESC**: Salir del programa
-- **P**: Pausar para calibración
-- **C**: Confirmar calibración (después de seleccionar 2 puntos)
-- **R**: Reanudar sin calibrar
+###  **Controles y Funcionalidades**
+
+#### **Controles Básicos**
+- **`Q`** o **`ESC`**: Salir del programa y cerrar todas las ventanas
+- **`P`**: Pausar el video para realizar calibración manual
+
+#### **Proceso de Calibración (Modo Pausa)**
+1. **Pausar**: Presiona `P` durante la reproducción del video
+2. **Seleccionar puntos**: 
+   - Haz **clic izquierdo** en el primer punto de referencia
+   - Haz **clic izquierdo** en el segundo punto de referencia
+   - Se dibujará automáticamente una línea roja entre los puntos
+3. **Confirmar calibración**: Presiona `C` después de seleccionar los 2 puntos
+   - El programa pedirá ingresar la **distancia real** en metros
+   - Ejemplo: Si los puntos están separados 1.5 metros, ingresa `1.5`
+4. **Opciones adicionales**:
+   - **`R`**: Reanudar sin calibrar (mantiene escala en píxeles)
+   - **`C`**: Confirmar y aplicar la calibración métrica
+
+#### **Ventanas del Programa**
+El programa abre **2 ventanas simultáneamente**:
+
+1. **Ventana Principal "Frame"**:
+   - Muestra el video original con tracking en tiempo real
+   - Información superpuesta: posición, velocidad, aceleración
+   - Trayectoria completa del objeto (línea verde)
+   - Centro del objeto detectado (círculo rojo)
+
+2. **Ventana "Apertura (Open)"**:
+   - Muestra la máscara de detección procesada
+   - Visualización en blanco y negro del objeto detectado
+   - Útil para verificar la calidad de la detección
+
+#### **Información Mostrada en Pantalla**
+Durante la ejecución se muestra en tiempo real:
+- **Posición**: Coordenadas X e Y en píxeles
+- **Velocidad**: Componentes Vx, Vy y velocidad total
+- **Aceleración**: Componentes Ax, Ay y aceleración total
+
+#### **Flujo de Trabajo Recomendado**
+1. **Ejecutar** el programa con `python main.py`
+2. **Observar** el tracking automático durante unos segundos
+3. **Pausar** con `P` cuando desees calibrar la escala
+4. **Seleccionar** dos puntos con distancia conocida
+5. **Ingresar** la distancia real en metros
+6. **Continuar** el análisis con datos calibrados
+7. **Salir** con `Q` cuando termine el video o desees parar
+
+#### **Resultados Automáticos**
+Al finalizar la ejecución se generan automáticamente:
+- **Gráficas** de análisis cinemático (posición, velocidad, aceleración vs tiempo)
+- **Archivo Excel** con todos los datos calculados (`resultados/resultados.xlsx`)
+
+#### **Consejos de Uso**
+-  **Iluminación**: Asegúrate de que el objeto verde sea claramente visible
+-  **Calibración**: Usa objetos de tamaño conocido para mejor precisión
+-  **Pausa oportuna**: Calibra cuando el objeto esté bien visible y estático
+-  **Precisión**: Haz clic exactamente en los puntos de referencia deseados
 
 ##  Funcionalidades
 - **Detección por color HSV** para objetos verdes
