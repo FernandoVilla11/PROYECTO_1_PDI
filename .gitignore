@@ -1,6 +1,13 @@
-# Ignorar todos los videos
+# Ignorar videos en general, EXCEPTO los de la carpeta data
 *.mp4
 *.avi
 *.mov
 *.mkv
 *.flv
+
+# Permitir videos en la carpeta data (sobrescribir la regla anterior)
+!data/*.mp4
+!data/*.avi
+!data/*.mov
+!data/*.mkv
+!data/*.flv
