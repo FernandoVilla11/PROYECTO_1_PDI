@@ -1,8 +1,8 @@
 import math
 import os
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
 
 # ---------------------------------------Calcular velocidad entre dos posiciones---------------------------------------
 def calcular_velocidad(prev_cx, prev_cy, cx, cy, fps):
@@ -86,7 +86,6 @@ def graficar_resultados(tiempos, posiciones, velocidades, aceleraciones, meters_
     ay = [convertir_a_metros(a[1], meters_per_pixel) for a in aceleraciones]
     a = [convertir_a_metros(a[2], meters_per_pixel) for a in aceleraciones]
 
-    # ========== GRÁFICAS BÁSICAS ==========
     fig, axs = plt.subplots(3, 1, figsize=(10, 12))
 
     # --- Trayectoria ---
@@ -145,11 +144,6 @@ def graficar_resultados(tiempos, posiciones, velocidades, aceleraciones, meters_
     else:
         print("\n⚠️  Pocos datos para análisis teórico (necesarios > 3 puntos)")
         print("   Ejecute por más tiempo o reduzca la velocidad del video")
-
-    # Ajustar márgenes para que no se superpongan los nombres y leyendas
-    fig.subplots_adjust(hspace=0.4, top=0.95, bottom=0.08)
-
-    plt.show()
 
 # ---------------------------------------Funciones para trayectoria teórica---------------------------------------
 

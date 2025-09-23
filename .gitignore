@@ -1,40 +1,6 @@
-# Archivos compilados de Python
-*.py[cod]
-*$py.class
-
-# Archivos temporales y de caché
-*.pyc
-*.pyo
-*.pyd
-.Python
-
-# Archivos de entorno virtual
-venv/
-env/
-ENV/
-
-# Archivos de IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Archivos del sistema
-.DS_Store
-Thumbs.db
-
-# Archivos temporales de Excel
-~$*.xlsx
-~$*.xls
-
-# Ignorar videos grandes EXCEPTO los de la carpeta data
+# Ignorar todos los videos
 *.mp4
 *.avi
 *.mov
 *.mkv
 *.flv
-
-# Permitir videos de ejemplo en la carpeta data
-!data/*.mp4
-!data/*.avi
-!data/*.mov
