@@ -116,33 +116,33 @@ Al finalizar la ejecución se generan automáticamente:
 
 ##  Funcionalidades
 
-### 🎯 **Procesamiento de Imagen**
+###  **Procesamiento de Imagen**
 - **Detección por color HSV** para objetos verdes
 - **Operaciones morfológicas** para reducir ruido
 - **Cálculo de centroide** para posicionamiento preciso
 
-### 📊 **Análisis Cinemático**
+###  **Análisis Cinemático**
 - **Cálculo de trayectoria** en tiempo real
 - **Análisis cinemático**: posición, velocidad, aceleración
 - **Calibración manual** para conversión píxeles → metros
 - **Visualización en tiempo real** con datos superpuestos
 
-### 🔬 **Comparación Teórica vs Experimental**
+###  **Comparación Teórica vs Experimental**
 - **Ajuste automático** de modelo parabólico a datos experimentales
 - **Cálculo de trayectoria teórica** usando ecuaciones de movimiento
 - **Métricas de precisión**: R², RMSE, Error Absoluto Medio
 - **Gráficas comparativas** lado a lado
 - **Análisis estadístico** automático del ajuste
 
-### 💾 **Exportación de Resultados**
-### 💾 **Exportación de Resultados**
+###  **Exportación de Resultados**
+###  **Exportación de Resultados**
 - **Exportación automática** de resultados a Excel
 - **Gráficas interactivas** con Matplotlib
 - **Reportes estadísticos** detallados en consola
 
 ##  Resultados
 
-### 📈 **Gráficas Generadas Automáticamente**
+###  **Gráficas Generadas Automáticamente**
 El sistema genera dos conjuntos de gráficas:
 
 1. **Gráficas Básicas**:
@@ -156,13 +156,13 @@ El sistema genera dos conjuntos de gráficas:
    - Trayectoria completa (experimental vs teórico)
    - Velocidades vs Tiempo (experimental vs teórico)
 
-### 📊 **Métricas Estadísticas**
+###  **Métricas Estadísticas**
 - **Coeficiente de determinación (R²)**: Calidad del ajuste (0-1)
 - **Error cuadrático medio (RMSE)**: Precisión en metros
 - **Error absoluto medio (MAE)**: Desviación promedio
 - **Parámetros del modelo**: x₀, vₓ₀, y₀, vᵧ₀, g
 
-### 📋 **Archivo Excel Exportado**
+###  **Archivo Excel Exportado**
 
 ##  Configuración
 - **Rango de color verde**: Ajustable en `procesamiento.py`
