@@ -2,6 +2,7 @@ import math
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 
 # ---------------------------------------Calcular velocidad entre dos posiciones---------------------------------------
 def calcular_velocidad(prev_cx, prev_cy, cx, cy, fps):
@@ -85,6 +86,7 @@ def graficar_resultados(tiempos, posiciones, velocidades, aceleraciones, meters_
     ay = [convertir_a_metros(a[1], meters_per_pixel) for a in aceleraciones]
     a = [convertir_a_metros(a[2], meters_per_pixel) for a in aceleraciones]
 
+    # ========== GRÁFICAS BÁSICAS ==========
     fig, axs = plt.subplots(3, 1, figsize=(10, 12))
 
     # --- Trayectoria ---
@@ -118,5 +120,200 @@ def graficar_resultados(tiempos, posiciones, velocidades, aceleraciones, meters_
 
     # Ajustar márgenes para que no se superpongan los nombres y leyendas
     fig.subplots_adjust(hspace=0.4, top=0.95, bottom=0.08)
+    plt.show()
+
+    # ========== ANÁLISIS TEÓRICO vs EXPERIMENTAL ==========
+    if len(x) > 3 and len(y) > 3:  # Necesitamos suficientes puntos para el ajuste
+        print("\n🔄 Generando comparación con trayectoria teórica...")
+        
+        # Ajustar modelo parabólico a los datos experimentales
+        tiempos_ajuste = tiempos[:len(x)]
+        parametros = ajustar_modelo_parabolico(tiempos_ajuste, x, y)
+        x0, vx0, y0, vy0, g = parametros
+        
+        # Calcular trayectoria teórica
+        x_teorica, y_teorica = calcular_trayectoria_teorica(tiempos_ajuste, x0, vx0, y0, vy0, g)
+        
+        # Calcular velocidades teóricas
+        tiempos_vel = tiempos[1:len(vx)+1] if len(vx) < len(tiempos) else tiempos[:len(vx)]
+        vx_teorica, vy_teorica, v_teorica = calcular_velocidad_teorica(tiempos_vel, vx0, vy0, g)
+        
+        # Graficar comparación
+        graficar_comparacion_teorica(tiempos, x, y, vx, vy, v,
+                                   x_teorica, y_teorica, vx_teorica, vy_teorica, v_teorica,
+                                   parametros)
+    else:
+        print("\n⚠️  Pocos datos para análisis teórico (necesarios > 3 puntos)")
+        print("   Ejecute por más tiempo o reduzca la velocidad del video")
+
+    # Ajustar márgenes para que no se superpongan los nombres y leyendas
+    fig.subplots_adjust(hspace=0.4, top=0.95, bottom=0.08)
 
     plt.show()
+
+# ---------------------------------------Funciones para trayectoria teórica---------------------------------------
+
+def ajustar_modelo_parabolico(tiempos, x_exp, y_exp):
+    """
+    Ajusta un modelo parabólico a los datos experimentales
+    Retorna los parámetros del modelo: x0, vx0, y0, vy0, g
+    """
+    # Para X: x(t) = x0 + vx0*t (movimiento rectilíneo uniforme)
+    # Ajuste lineal para X
+    if len(tiempos) > 1:
+        coef_x = np.polyfit(tiempos, x_exp, 1)
+        vx0 = coef_x[0]  # velocidad inicial en x
+        x0 = coef_x[1]   # posición inicial en x
+    else:
+        x0, vx0 = x_exp[0], 0
+    
+    # Para Y: y(t) = y0 + vy0*t + 0.5*g*t² (movimiento uniformemente acelerado)
+    # Ajuste cuadrático para Y
+    if len(tiempos) > 2:
+        coef_y = np.polyfit(tiempos, y_exp, 2)
+        g = 2 * coef_y[0]    # aceleración (2 * coeficiente de t²)
+        vy0 = coef_y[1]      # velocidad inicial en y
+        y0 = coef_y[2]       # posición inicial en y
+    else:
+        y0, vy0, g = y_exp[0], 0, 9.81
+    
+    return x0, vx0, y0, vy0, g
+
+def calcular_trayectoria_teorica(tiempos, x0, vx0, y0, vy0, g):
+    """
+    Calcula la trayectoria teórica usando las ecuaciones de movimiento parabólico
+    """
+    x_teorica = x0 + vx0 * np.array(tiempos)
+    y_teorica = y0 + vy0 * np.array(tiempos) + 0.5 * g * np.array(tiempos)**2
+    
+    return x_teorica, y_teorica
+
+def calcular_velocidad_teorica(tiempos, vx0, vy0, g):
+    """
+    Calcula las velocidades teóricas
+    """
+    vx_teorica = np.full_like(tiempos, vx0)  # velocidad constante en x
+    vy_teorica = vy0 + g * np.array(tiempos)  # velocidad variable en y
+    v_teorica = np.sqrt(vx_teorica**2 + vy_teorica**2)
+    
+    return vx_teorica, vy_teorica, v_teorica
+
+def calcular_metricas_error(experimental, teorica):
+    """
+    Calcula métricas de error entre datos experimentales y teóricos
+    """
+    experimental = np.array(experimental)
+    teorica = np.array(teorica)
+    
+    # Asegurar que ambos arrays tengan la misma longitud
+    min_len = min(len(experimental), len(teorica))
+    experimental = experimental[:min_len]
+    teorica = teorica[:min_len]
+    
+    # Error cuadrático medio (RMSE)
+    rmse = np.sqrt(np.mean((experimental - teorica)**2))
+    
+    # Error absoluto medio (MAE)
+    mae = np.mean(np.abs(experimental - teorica))
+    
+    # Coeficiente de determinación (R²)
+    ss_res = np.sum((experimental - teorica)**2)
+    ss_tot = np.sum((experimental - np.mean(experimental))**2)
+    r2 = 1 - (ss_res / ss_tot) if ss_tot != 0 else 0
+    
+    return rmse, mae, r2
+
+def graficar_comparacion_teorica(tiempos, x_exp, y_exp, vx_exp, vy_exp, v_exp, 
+                                x_teo, y_teo, vx_teo, vy_teo, v_teo,
+                                parametros_modelo):
+    """
+    Grafica la comparación entre datos experimentales y teóricos
+    """
+    x0, vx0, y0, vy0, g = parametros_modelo
+    
+    fig, axs = plt.subplots(2, 2, figsize=(15, 10))
+    
+    # --- Trayectoria X vs Tiempo ---
+    axs[0,0].plot(tiempos[:len(x_exp)], x_exp, 'bo-', label='Experimental', markersize=4)
+    axs[0,0].plot(tiempos[:len(x_teo)], x_teo, 'r-', label='Teórico', linewidth=2)
+    axs[0,0].set_title('Posición X vs Tiempo')
+    axs[0,0].set_xlabel('Tiempo (s)')
+    axs[0,0].set_ylabel('Posición X (m)')
+    axs[0,0].legend()
+    axs[0,0].grid(True, alpha=0.3)
+    
+    # Calcular y mostrar métricas para X
+    rmse_x, mae_x, r2_x = calcular_metricas_error(x_exp, x_teo[:len(x_exp)])
+    axs[0,0].text(0.05, 0.95, f'R² = {r2_x:.3f}\nRMSE = {rmse_x:.4f} m', 
+                  transform=axs[0,0].transAxes, verticalalignment='top',
+                  bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8))
+    
+    # --- Trayectoria Y vs Tiempo ---
+    axs[0,1].plot(tiempos[:len(y_exp)], y_exp, 'bo-', label='Experimental', markersize=4)
+    axs[0,1].plot(tiempos[:len(y_teo)], y_teo, 'r-', label='Teórico', linewidth=2)
+    axs[0,1].set_title('Posición Y vs Tiempo')
+    axs[0,1].set_xlabel('Tiempo (s)')
+    axs[0,1].set_ylabel('Posición Y (m)')
+    axs[0,1].legend()
+    axs[0,1].grid(True, alpha=0.3)
+    
+    # Calcular y mostrar métricas para Y
+    rmse_y, mae_y, r2_y = calcular_metricas_error(y_exp, y_teo[:len(y_exp)])
+    axs[0,1].text(0.05, 0.95, f'R² = {r2_y:.3f}\nRMSE = {rmse_y:.4f} m', 
+                  transform=axs[0,1].transAxes, verticalalignment='top',
+                  bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8))
+    
+    # --- Trayectoria X vs Y ---
+    axs[1,0].plot(x_exp, y_exp, 'bo-', label='Experimental', markersize=4)
+    axs[1,0].plot(x_teo, y_teo, 'r-', label='Teórico', linewidth=2)
+    axs[1,0].set_title('Trayectoria (X vs Y)')
+    axs[1,0].set_xlabel('Posición X (m)')
+    axs[1,0].set_ylabel('Posición Y (m)')
+    axs[1,0].legend()
+    axs[1,0].grid(True, alpha=0.3)
+    axs[1,0].invert_yaxis()
+    
+    # --- Velocidad vs Tiempo ---
+    min_len_v = min(len(vx_exp), len(vy_exp), len(v_exp))
+    axs[1,1].plot(tiempos[1:min_len_v+1], vx_exp[:min_len_v], 'b-', label='Vx Experimental', alpha=0.7)
+    axs[1,1].plot(tiempos[1:min_len_v+1], vy_exp[:min_len_v], 'g-', label='Vy Experimental', alpha=0.7)
+    axs[1,1].plot(tiempos[1:len(vx_teo)+1], vx_teo, 'b--', label='Vx Teórico', linewidth=2)
+    axs[1,1].plot(tiempos[1:len(vy_teo)+1], vy_teo, 'g--', label='Vy Teórico', linewidth=2)
+    axs[1,1].set_title('Velocidades vs Tiempo')
+    axs[1,1].set_xlabel('Tiempo (s)')
+    axs[1,1].set_ylabel('Velocidad (m/s)')
+    axs[1,1].legend()
+    axs[1,1].grid(True, alpha=0.3)
+    
+    # Información del modelo en la gráfica de velocidad
+    info_texto = f'Modelo Parabólico:\nx₀ = {x0:.3f} m\nvₓ₀ = {vx0:.3f} m/s\ny₀ = {y0:.3f} m\nvᵧ₀ = {vy0:.3f} m/s\ng = {g:.3f} m/s²'
+    axs[1,1].text(0.98, 0.98, info_texto, transform=axs[1,1].transAxes, 
+                  verticalalignment='top', horizontalalignment='right',
+                  bbox=dict(boxstyle='round', facecolor='lightblue', alpha=0.8))
+    
+    plt.tight_layout()
+    plt.show()
+    
+    # Imprimir resumen estadístico
+    print("\n" + "="*60)
+    print("📊 ANÁLISIS DE COMPARACIÓN TEÓRICA vs EXPERIMENTAL")
+    print("="*60)
+    print(f"📏 Parámetros del modelo parabólico:")
+    print(f"   • Posición inicial X: {x0:.4f} m")
+    print(f"   • Velocidad inicial X: {vx0:.4f} m/s")
+    print(f"   • Posición inicial Y: {y0:.4f} m")
+    print(f"   • Velocidad inicial Y: {vy0:.4f} m/s")
+    print(f"   • Aceleración gravitacional: {g:.4f} m/s²")
+    print(f"\n📈 Métricas de ajuste:")
+    print(f"   • Posición X - R²: {r2_x:.4f}, RMSE: {rmse_x:.6f} m")
+    print(f"   • Posición Y - R²: {r2_y:.4f}, RMSE: {rmse_y:.6f} m")
+    print(f"\n💡 Interpretación:")
+    if r2_x > 0.95 and r2_y > 0.95:
+        print("   ✅ Excelente ajuste del modelo teórico")
+    elif r2_x > 0.90 and r2_y > 0.90:
+        print("   ✅ Buen ajuste del modelo teórico")
+    elif r2_x > 0.80 and r2_y > 0.80:
+        print("   ⚠️  Ajuste moderado - posible ruido o desviaciones")
+    else:
+        print("   ❌ Ajuste pobre - revisar detección o condiciones experimentales")
+    print("="*60)

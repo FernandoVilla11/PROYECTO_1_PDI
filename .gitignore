@@ -27,9 +27,14 @@ Thumbs.db
 ~$*.xlsx
 ~$*.xls
 
-# Ignorar videos grandes (mantener uno pequeño como ejemplo)
+# Ignorar videos grandes EXCEPTO los de la carpeta data
 *.mp4
 *.avi
 *.mov
 *.mkv
 *.flv
+
+# Permitir videos de ejemplo en la carpeta data
+!data/*.mp4
+!data/*.avi
+!data/*.mov
