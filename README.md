@@ -20,8 +20,8 @@ Este proyecto implementa un sistema de **tracking de objetos en tiempo real** pa
 ##  Tecnologías
 - **Python 3.13+**
 - **OpenCV** - Procesamiento de video e imágenes
-- **NumPy** - Cálculos numéricos
-- **Matplotlib** - Gráficas de análisis
+- **NumPy** - Cálculos numéricos y análisis matemático
+- **Matplotlib** - Gráficas de análisis y comparación
 - **Pandas** - Manipulación de datos
 - **Openpyxl** - Exportación a Excel
 
@@ -102,7 +102,10 @@ Durante la ejecución se muestra en tiempo real:
 
 #### **Resultados Automáticos**
 Al finalizar la ejecución se generan automáticamente:
-- **Gráficas** de análisis cinemático (posición, velocidad, aceleración vs tiempo)
+- **Gráficas básicas** de análisis cinemático (posición, velocidad, aceleración vs tiempo)
+- **Análisis comparativo** entre trayectoria experimental y teórica
+- **Métricas de ajuste**: Coeficiente R², RMSE, Error Absoluto Medio
+- **Parámetros del modelo**: Velocidades iniciales, posición inicial, aceleración gravitacional
 - **Archivo Excel** con todos los datos calculados (`resultados/resultados.xlsx`)
 
 #### **Consejos de Uso**
@@ -112,19 +115,54 @@ Al finalizar la ejecución se generan automáticamente:
 -  **Precisión**: Haz clic exactamente en los puntos de referencia deseados
 
 ##  Funcionalidades
+
+###  **Procesamiento de Imagen**
 - **Detección por color HSV** para objetos verdes
 - **Operaciones morfológicas** para reducir ruido
+- **Cálculo de centroide** para posicionamiento preciso
+
+###  **Análisis Cinemático**
 - **Cálculo de trayectoria** en tiempo real
 - **Análisis cinemático**: posición, velocidad, aceleración
 - **Calibración manual** para conversión píxeles → metros
 - **Visualización en tiempo real** con datos superpuestos
-- **Exportación automática** de resultados
+
+###  **Comparación Teórica vs Experimental**
+- **Ajuste automático** de modelo parabólico a datos experimentales
+- **Cálculo de trayectoria teórica** usando ecuaciones de movimiento
+- **Métricas de precisión**: R², RMSE, Error Absoluto Medio
+- **Gráficas comparativas** lado a lado
+- **Análisis estadístico** automático del ajuste
+
+###  **Exportación de Resultados**
+###  **Exportación de Resultados**
+- **Exportación automática** de resultados a Excel
+- **Gráficas interactivas** con Matplotlib
+- **Reportes estadísticos** detallados en consola
 
 ##  Resultados
-El sistema genera:
-1. **Tracking visual** con trayectoria completa
-2. **Gráficas de análisis** (posición, velocidad, aceleración vs tiempo)
-3. **Archivo Excel** con todos los datos calculados
+
+###  **Gráficas Generadas Automáticamente**
+El sistema genera dos conjuntos de gráficas:
+
+1. **Gráficas Básicas**:
+   - Trayectoria experimental (X vs Y)
+   - Velocidad vs tiempo (Vx, Vy, V total)
+   - Aceleración vs tiempo (Ax, Ay, A total)
+
+2. **Análisis Comparativo Teórico**:
+   - Posición X vs Tiempo (experimental vs teórico)
+   - Posición Y vs Tiempo (experimental vs teórico)
+   - Trayectoria completa (experimental vs teórico)
+   - Velocidades vs Tiempo (experimental vs teórico)
+
+###  **Métricas Estadísticas**
+- **Coeficiente de determinación (R²)**: Calidad del ajuste (0-1)
+- **Error cuadrático medio (RMSE)**: Precisión en metros
+- **Error absoluto medio (MAE)**: Desviación promedio
+- **Parámetros del modelo**: x₀, vₓ₀, y₀, vᵧ₀, g
+
+###  **Archivo Excel Exportado**
 
 ##  Configuración
 - **Rango de color verde**: Ajustable en `procesamiento.py`
