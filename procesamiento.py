@@ -31,7 +31,6 @@ def procesar_video(VIDEO_PATH):
     fps = cap.get(cv2.CAP_PROP_FPS)
     prev_cx, prev_cy = None, None
     prev_vx, prev_vy = None, None
-    trayectoria = []
     tiempo_actual = 0
 
     posiciones, velocidades, aceleraciones, tiempos = [], [], [], []
@@ -64,6 +63,7 @@ def procesar_video(VIDEO_PATH):
         # cv2.imshow("Mascara Original", mask)
         # cv2.imshow("Erosion", mask_erode)
         # cv2.imshow("Dilatacion", mask_dilate)
+        cv2.imshow("Sin operacion morfologica", mask)
         cv2.imshow("Apertura (Open)", mask_open)
         # cv2.imshow("Cierre (Close)", mask_close)
 
@@ -74,10 +74,9 @@ def procesar_video(VIDEO_PATH):
 
             posiciones.append((cx, cy))
             tiempos.append(tiempo_actual)
-            trayectoria.append((cx, cy))
 
-            for i in range(1, len(trayectoria)):
-                cv2.line(frame, trayectoria[i-1], trayectoria[i], (0, 255, 0), 2)
+            for i in range(1, len(posiciones)):
+                cv2.line(frame, posiciones[i-1], posiciones[i], (0, 255, 0), 2)
             cv2.circle(frame, (cx, cy), 5, (0, 0, 255), -1)
 
             if prev_cx is not None:
@@ -124,7 +123,7 @@ def procesar_video(VIDEO_PATH):
         cv2.imshow("Frame", frame)
 
         k = cv2.waitKey(30) & 0xFF
-        if k == ord('q') or k == 27:
+        if k == ord('q'):
             break
         if k == ord('p'):
             print("⏸ Pausa. Selecciona 2 puntos para calibrar.")

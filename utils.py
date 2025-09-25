@@ -30,12 +30,12 @@ def convertir_a_metros(v, meters_per_pixel):
 
 # ---------------------------------------Generar archivo de excel---------------------------------------
 def guardar_tablas_excel(tiempos, posiciones, velocidades, aceleraciones, carpeta="resultados", archivo="resultados.xlsx"):
-    # 1️⃣ Crear la carpeta si no existe
+    # Crear la carpeta si no existe
     if not os.path.exists(carpeta):
         os.makedirs(carpeta)
         print(f"Carpeta '{carpeta}' creada.")
 
-    # 2️⃣ Ajustar longitudes de listas
+    # Ajustar longitudes de listas
     len_pos = len(posiciones)
     len_vel = len(velocidades)
     len_acel = len(aceleraciones)
@@ -49,7 +49,7 @@ def guardar_tablas_excel(tiempos, posiciones, velocidades, aceleraciones, carpet
     velocidades_limpias = [(vx, vy) for vx, vy, *rest in velocidades]
     aceleraciones_limpias = [(ax, ay) for ax, ay, *rest in aceleraciones]
 
-    # 3️⃣ Crear DataFrames
+    # Crear DataFrames
     df_pos = pd.DataFrame(posiciones, columns=["X", "Y"])
     df_pos["Tiempo"] = tiempos_pos
     df_pos = df_pos[["Tiempo", "X", "Y"]]
@@ -62,7 +62,7 @@ def guardar_tablas_excel(tiempos, posiciones, velocidades, aceleraciones, carpet
     df_acel["Tiempo"] = tiempos_acel
     df_acel = df_acel[["Tiempo", "Ax", "Ay"]]
 
-    # 4️⃣ Guardar todo en un solo archivo Excel con tres hojas
+    # Guardar todo
     ruta_archivo = os.path.join(carpeta, archivo)
     with pd.ExcelWriter(ruta_archivo) as writer:
         df_pos.to_excel(writer, sheet_name="Posiciones", index=False)
